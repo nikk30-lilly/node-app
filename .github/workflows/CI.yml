@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - "main"
-
+  workflow_dispatch:
+env:
+  IMAGE_NAME: examplenode-dev
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,4 +30,12 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest
+          tags: ${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+      -
+        name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.PAT }}
+          repository: ${{ github.actor }}/argocd-node-app-config
+          event-type: new-image
+          client-payload: '{"image": "${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}"}'
