@@ -7,6 +7,10 @@ on:
   workflow_dispatch:
 env:
   IMAGE_NAME: examplenode-dev
+permissions:
+  pull-requests: write
+  issues: write
+  repository-projects: write
 jobs:
   build:
     runs-on: ubuntu-latest
